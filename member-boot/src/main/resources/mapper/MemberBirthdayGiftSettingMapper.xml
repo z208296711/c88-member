@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberBirthdayGiftSettingMapper">
+
+    <resultMap id="BaseResultMap" type="com.c88.member.pojo.entity.MemberBirthdayGiftSetting">
+            <result property="inbox" column="inbox" jdbcType="TINYINT"/>
+            <result property="days" column="days" jdbcType="TINYINT"/>
+            <result property="betRate" column="bet_rate" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        inbox,days,bet_rate
+    </sql>
+</mapper>

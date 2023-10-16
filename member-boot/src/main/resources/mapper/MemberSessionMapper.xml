@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberSessionMapper">
+    <!--    <sql id="tableName">-->
+    <!--        member_session-->
+    <!--    </sql>-->
+
+    <!--    <sql id="baseColumn">-->
+    <!--        user_name,login_ip,uuid,login_time-->
+    <!--    </sql>-->
+    <!--TODO
+       after table name defined, replace table name and column name below
+    -->
+    <select id="checkSessionListForLastLoginIp" resultType="com.c88.member.pojo.entity.Member">
+        SELECT
+        m.*
+        FROM
+        member_session s
+        INNER JOIN
+        (SELECT
+        username,
+        MAX(login_time) AS loginTime
+        FROM
+        member_session
+        GROUP BY username) ss
+        ON s.`username` = ss.username
+        AND s.`login_time` = ss.loginTime
+        join member m on s.username = m.user_name
+        WHERE
+        <if test="type==2">
+            s.`login_ip`
+        </if>
+        <if test="type==5">
+            s.`uuid`
+        </if>
+
+        =(SELECT
+        <if test="type==2">
+            s.`login_ip`
+        </if>
+        <if test="type==5">
+            s.`uuid`
+        </if>
+        FROM member_session WHERE username=#{username} order by loginTime desc limit 1)
+        and s.username != #{username}
+    </select>
+
+    <select id="checkSessionList" resultType="com.c88.member.pojo.entity.Member">
+        SELECT member.*
+        FROM
+        member
+        WHERE
+        <if test="type==1">
+            register_ip =
+        </if>
+        <if test="type==6">
+            real_name =
+        </if>
+        (SELECT
+        <if test="type==1">
+            register_ip
+        </if>
+        <if test="type==6">
+            real_name
+        </if>
+        FROM
+        member
+        WHERE user_name = #{username}) and user_name != #{username}
+    </select>
+
+    <select id="checkSimilarAccount" resultType="com.c88.member.pojo.entity.Member">
+        SELECT member.*
+        from member
+        where (user_name like concat('%', #{username}) or user_name like concat(#{username}, '%'))
+          and user_name != #{username}
+    </select>
+
+    <select id="checkBankCard" resultType="com.c88.member.pojo.entity.Member">
+        SELECT m.*
+        from member m
+                 join payment_member_bank b on m.id = b.member_id
+        where b.card_no =
+              (SELECT card_no
+               from payment_member_bank
+               where member_id = (SELECT id from member WHERE user_name = #{username}))
+    </select>
+
+    <select id="findMemberLoginTotalReport"
+            resultType="com.c88.member.pojo.vo.AdminMemberLoginReportVO">
+        select date(login_time) as date,
+               count(distinct username) as distinctLogin,
+               count(username) as totalLogin,
+               sum(IF(device = 'h5', 1, 0)) as totalH5Login,
+               sum(IF(device = 'pc', 1, 0)) as totalPCLogin,
+               sum(IF(device = 'android', 1, 0)) as totalAndroidLogin,
+               sum(IF(device = 'ios', 1, 0)) as totalIosLogin
+        from member_session
+        where login_time <![CDATA[ >= ]]> #{form.startTime} and login_time <![CDATA[ <= ]]> #{form.endTime}
+        group by date(convert_tz(login_time, '+00:00', #{form.zone}))
+        order by date
+    </select>
+
+    <select id="findMemberLoginDistinctReport" resultType="com.c88.member.pojo.vo.AdminMemberLoginReportVO">
+        SELECT
+        date,
+        sum(IF(device = 'h5', 1, 0)) AS distinctH5Login,
+        sum(IF(device = 'pc', 1, 0)) AS distinctPCLogin,
+        sum(IF(device = 'android', 1, 0)) AS distinctAndroidLogin,
+        sum(IF(device = 'ios', 1, 0)) AS distinctIosLogin
+        FROM (SELECT  date(login_time) as date, username, device
+        FROM member_session
+        where login_time <![CDATA[ >= ]]> #{form.startTime} and login_time <![CDATA[ <= ]]> #{form.endTime}
+        group by date(convert_tz(login_time, '+00:00',  #{form.zone})) , username, device) as a
+        group by a.date
+    </select>
+
+</mapper>

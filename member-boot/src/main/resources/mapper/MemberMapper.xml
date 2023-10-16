@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberMapper">
+
+    <select id="queryMember" resultType="com.c88.member.pojo.vo.AdminMemberVO">
+        SELECT
+        m.*,
+        mvc.name as vipLevel,
+        (SELECT JSON_ARRAYAGG(t.name)
+        FROM member_tag mt,
+        tag t
+        WHERE mt.member_id = m.id
+        AND mt.tag_id = t.id) AS tags
+        FROM member m
+        left join member_vip mv on m.id = mv.member_id
+        left join member_vip_config mvc on mvc.id = mv.current_vip_id
+        <where>
+            <if test='queryParams.vipId !=null '>
+                AND mv.current_vip_id= #{queryParams.vipId}
+            </if>
+            <if test='queryParams.userName !=null '>
+                AND m.user_name= #{queryParams.userName}
+            </if>
+            <if test='queryParams.realName !=null '>
+                AND m.real_name= #{queryParams.realName}
+            </if>
+            <if test='queryParams.email !=null '>
+                AND SUBSTR(m.email,1,10) = #{queryParams.email}
+            </if>
+            <if test='queryParams.mobile !=null '>
+                AND SUBSTR(m.mobile,-5) =#{queryParams.mobile}
+            </if>
+            <if test='queryParams.bankAccount !=null '>
+                EXISTS (select id from payment_member_bank mb where SUBSTR(card_no,-5) = #{queryParams.bankAccount} and
+                mb.member_id = m.id)
+            </if>
+            <if test='queryParams.tag !=null '>
+                AND m.id in(SELECT mt.member_id FROM
+                member_tag mt WHERE mt.tag_id=#{queryParams.tag})
+            </if>
+            <if test='queryParams.status !=null '>
+                AND m.status = #{queryParams.status}
+            </if>
+            <if test='queryParams.online !=null '>
+                <if test='queryParams.online ==1 '>
+                    <if test='!queryParams.onlineMemberIds.isEmpty()'>
+                        AND m.id in
+                        <foreach collection="queryParams.onlineMemberIds" item="id" open="(" close=")" separator=",">
+                            #{id}
+                        </foreach>
+                    </if>
+                </if>
+                <if test='queryParams.online ==0 '>
+                    <if test='!queryParams.onlineMemberIds.isEmpty()'>
+                        AND m.id not in
+                        <foreach collection="queryParams.onlineMemberIds" item="id" open="(" close=")" separator=",">
+                            #{id}
+                        </foreach>
+                    </if>
+                </if>
+            </if>
+            <if test='queryParams.timeType == 1'>
+                <if test='queryParams.beginTime !=null and  queryParams.beginTime.trim() neq ""'>
+                    AND m.last_login_time &gt;= #{queryParams.beginTime}
+                </if>
+                <if test='queryParams.endTime !=null and  queryParams.endTime.trim() neq ""'>
+                    AND m.last_login_time &lt;= #{queryParams.endTime}
+                </if>
+            </if>
+            <if test='queryParams.timeType == 2'>
+                <if test='queryParams.beginTime !=null and  queryParams.beginTime.trim() neq ""'>
+                    AND m.gmt_create &gt;= #{queryParams.beginTime}
+                </if>
+                <if test='queryParams.endTime !=null and  queryParams.endTime.trim() neq ""'>
+                    AND m.gmt_create &lt;= #{queryParams.endTime}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findMembersVipInfo" resultType="com.c88.member.pojo.vo.MemberVipInfoVO">
+        select m.id memberId,
+               m.user_name username,
+               mv.id memberVipId,
+               mv.current_vip_id,
+               mv.previous_vip_id,
+               mv.level_up_time,
+               mv.level_down_time
+        from member m
+                 left join member_vip mv on m.id = mv.member_id
+        ${ew.customSqlSegment}
+
+    </select>
+
+</mapper>

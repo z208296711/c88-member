@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.pojo.mapper.MemberLiquidityMapper">
+    <sql id="tableName">
+        member_liquidity
+    </sql>
+
+    <sql id="baseColumn">
+        user_name,recharge_amount,recharge_count,withdraw_amount,withdraw_count,promotion_amount,promotion_count,bonus_amount,bouns_count,bet_amount
+    </sql>
+
+</mapper>

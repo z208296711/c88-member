@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberBirthdayGiftRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.c88.member.pojo.entity.MemberBirthdayGiftRecord">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="memberId" column="member_id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="birthday" column="birthday" jdbcType="DATE"/>
+            <result property="vipName" column="vip_name" jdbcType="VARCHAR"/>
+            <result property="amount" column="amount" jdbcType="DECIMAL"/>
+            <result property="betRate" column="bet_rate" jdbcType="INTEGER"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,member_id,username,
+        birthday,vip_name,amount,
+        bet_rate,gmt_create,gmt_modified
+    </sql>
+</mapper>

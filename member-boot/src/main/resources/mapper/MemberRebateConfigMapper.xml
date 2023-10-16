@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberRebateConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.c88.member.pojo.entity.MemberRebateConfig">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="vipId" column="vip_id" jdbcType="INTEGER"/>
+            <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+            <result property="rebate" column="rebate" jdbcType="FLOAT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,vip_id,category_id,
+        gmt_create,gmt_modified,rebate
+    </sql>
+</mapper>

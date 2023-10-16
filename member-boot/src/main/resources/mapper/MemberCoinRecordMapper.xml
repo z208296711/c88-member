@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberCoinRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.c88.member.pojo.entity.MemberCoinRecord">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="memberId" column="member_id" jdbcType="OTHER"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="beforeCoin" column="before_coin" jdbcType="INTEGER"/>
+            <result property="coin" column="coin" jdbcType="INTEGER"/>
+            <result property="afterCoin" column="after_coin" jdbcType="INTEGER"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,member_id,username,before_coin,coin,
+        after_coin,gmt_modified,gmt_create
+    </sql>
+
+    <insert id="batchSaveOrUpdateCoinRecord">
+        insert into member_coin_record
+        (member_id,username,before_coin, coin, after_coin)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.memberId,jdbcType=OTHER},
+            #{item.username,jdbcType=VARCHAR},
+            #{item.beforeCoin,jdbcType=INTEGER},
+            #{item.coin,jdbcType=INTEGER},
+            #{item.afterCoin,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+</mapper>

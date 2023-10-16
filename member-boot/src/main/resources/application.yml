@@ -1,0 +1,81 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /member
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  application:
+    name: member
+  main:
+    allow-bean-definition-overriding: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#hystrix
+feign:
+  circuitbreaker:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 10000
+
+hystrix:
+  command:
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 3000
+
+auth:
+  header: Yzg4LXdlYXBwOjEyMzQ1Ng==
+
+mailuser: api
+mailpsw: dfa425a557151e845510a314a34fcd99-523596d9-a4914dd1
+mailurl: https://api.mailgun.net/v3/mail.cmb68.vip/messages
+
+sms.otp.provider.1:
+  apiurl: http://210.211.108.20:8080/onsmsapivoice
+  sender: DAUSO1
+  key: 4348454E4F5450313233343536
+  username: CHENOTP
+  pass: 123456
+
+sms.otp.provider.nuage:
+  apiurl: http://sms.nuage.asia/adsmsapi.php
+  apiKey: 77620f52b18d
+  name: comebetc88
+  pwd: 5729b0daf774
+
+sms.otp.provider.abenla:
+  apiurl: http://api.abenla.com/api/SendSms
+  loginName: AB1PDML
+  pwd: G7RYM9XPN
+  serviceTypeId: 271
+  callBack: false
+
+management:
+  server:
+    port: 18083
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

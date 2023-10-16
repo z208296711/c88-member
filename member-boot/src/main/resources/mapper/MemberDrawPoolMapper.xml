@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberDrawPoolMapper">
+
+    <insert id="batchSaveOrUpdateDrawpool">
+        insert into member_draw_pool
+        (template_id, draw_type, award_id,prize_count, prize_today, `percent`, sort, `enable`)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.templateId,jdbcType=OTHER},
+            #{item.drawType,jdbcType=INTEGER},
+            #{item.awardId,jdbcType=OTHER},
+            #{item.prizeCount,jdbcType=INTEGER},
+            #{item.prizeToday,jdbcType=INTEGER},
+            #{item.percent,jdbcType=INTEGER},
+            #{item.sort,jdbcType=INTEGER},
+            #{item.enable,jdbcType=INTEGER}
+            )
+        </foreach>
+        on duplicate key update
+        <trim prefix="" suffixOverrides=",">
+            <foreach collection="list" item="item" separator=",">
+                prize_count = values(prize_count),
+                prize_today = values(prize_today),
+                `percent` = values(percent),
+                sort = values(sort),
+                enable=values(enable)
+            </foreach>
+        </trim>
+    </insert>
+
+    <select id="findEnableDrawItemByTemplateId" resultType="com.c88.member.pojo.vo.EnableDrawItemCountVO">
+        select template_id templateId,
+               count(1) count
+        from member_draw_pool
+        where enable = 1
+        <if test='!templateIdList.isEmpty()'>
+            AND template_id in
+            <foreach collection="templateIdList" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        group by template_id
+    </select>
+</mapper>

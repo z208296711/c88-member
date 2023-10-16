@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c88.member.mapper.MemberCoinMapper">
+
+    <resultMap id="BaseResultMap" type="com.c88.member.pojo.entity.MemberCoin">
+            <id property="id" column="id" jdbcType="OTHER"/>
+            <result property="memberId" column="member_id" jdbcType="OTHER"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="coin" column="coin" jdbcType="INTEGER"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,member_id,username,
+        coin,gmt_modified,gmt_create
+    </sql>
+
+    <!--批量插入or更新-->
+    <insert id="batchSaveOrUpdateCoin">
+        insert into member_coin
+        (member_id,username,coin)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.memberId,jdbcType=OTHER},
+            #{item.username,jdbcType=VARCHAR},
+            #{item.coin,jdbcType=INTEGER}
+            )
+        </foreach>
+        on duplicate key update
+        <trim prefix="" suffixOverrides=",">
+            <foreach collection="list" item="item" separator=",">
+                coin = values(coin)
+--                        #{item.coin,jdbcType=INTEGER}
+            </foreach>
+        </trim>
+    </insert>
+</mapper>
